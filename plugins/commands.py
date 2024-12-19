@@ -3,7 +3,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
 from database import db
 
-CHANNEL_USERNAME = "your_channel_username"
+CHANNEL_USERNAME = "MOVIEZ_BOTZ"
 
 START_TEXT = """**Hello {} 😌
 I am a QR Code Bot**
