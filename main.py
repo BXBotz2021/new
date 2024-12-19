@@ -2,11 +2,10 @@ import os
 from dotenv import load_dotenv
 from pyrogram import Client
 
-
 load_dotenv()
 
 Bot = Client(
-    "QR Code Bot",
+    "QR Code Bot",  # Bot session name
     bot_token=os.environ.get("BOT_TOKEN"),
     api_id=int(os.environ.get("API_ID")),
     api_hash=os.environ.get("API_HASH"),
