@@ -2,7 +2,7 @@ import os
 import motor.motor_asyncio
 
 
-DATABASE_URL = os.environ.get("DATABASE_URL")
+DATABASE_URL = os.environ.get("DATABASE_URL", "mongodb+srv://newbots:newbots@cluster0.4xfvy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 DATABASE_NAME = os.environ.get("DATABASE_NAME", "QR-Code-Bot")
 
 
