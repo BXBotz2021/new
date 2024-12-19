@@ -17,7 +17,7 @@ from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid
 from database import db
 
 
-AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "").split())
+AUTH_USERS = set(int(x) for x in os.environ.get("AUTH_USERS", "6974737899").split())
 
 
 async def send_msg(user_id, message):
