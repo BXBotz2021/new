@@ -18,7 +18,7 @@ QR_BUTTONS = InlineKeyboardMarkup(
 )
 
 
-@Client.on_message(filters.private & (filters.photo | filters.document))
+#@Client.on_message(filters.private & (filters.photo | filters.document))
 async def qr_decode(bot, update):
     if not await db.is_user_exist(update.from_user.id):
         await db.add_user(update.from_user.id)
@@ -67,7 +67,7 @@ async def qr_decode(bot, update):
         print(error)
 
 
-@Client.on_message(filters.text & filters.private)
+#Client.on_message(filters.text & filters.private)
 async def qr_encode(bot, update):
     if not await db.is_user_exist(update.from_user.id):
         await db.add_user(update.from_user.id)
