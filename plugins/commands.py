@@ -1,9 +1,11 @@
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
+from pyrogram.enums import ChatMemberStatus  # Fixed import
 from database import db
 import re
 import logging
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -22,10 +24,10 @@ I am a QR Code Bot**
 
 HELP_TEXT = """**Hey, Follow these steps:**
 
-➞ Send me a link/text I will generate the QR code of that text
-➞ Send me a QR code image I will decode that image and convert to text
+➞ Send me a link/text I will generate the QR code of that text.
+➞ Send me a QR code image I will decode that image and convert it to text.
 
-**Available Commands**
+**Available Commands:**
 
 /start - Checking Bot Online
 /help - For more help
@@ -63,7 +65,8 @@ HELP_BUTTONS = InlineKeyboardMarkup(
         [
             InlineKeyboardButton('🏠 Home', callback_data='home'),
             InlineKeyboardButton('About 🔰', callback_data='about')
-        ],[
+        ],
+        [
             InlineKeyboardButton('⚒ Settings', callback_data='settings'),
             InlineKeyboardButton('Close ✖️', callback_data='close')
         ]
@@ -91,32 +94,20 @@ FSub_BUTTONS = InlineKeyboardMarkup(
     ]
 )
 
-async def is_subscribed(bot, query):
+async def is_subscribed(bot, user_id):
     try:
-        user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
+        user = await bot.get_chat_member(AUTH_CHANNEL, user_id)
+        return user.status not in [ChatMemberStatus.BANNED, None]
     except UserNotParticipant:
-        await __(bot, AUTH_CHANNEL)
-        return query.from_user.id in temp.REQUESTERS.get(AUTH_CHANNEL, {}).get(
-            "list", []
-        )
-
+        return False
     except Exception as e:
         logger.exception(e)
-    else:
-        if user.status != enums.ChatMemberStatus.BANNED:
-            return True
-
-    return False
+        return False
 
 
 @Client.on_callback_query()
 async def cb_handler(bot, update):
-    if update.data == "lol":
-        await update.answer(
-            text="Select a button below",
-            show_alert=True
-        )
-    elif update.data == "home":
+    if update.data == "home":
         await update.message.edit_text(
             text=START_TEXT.format(update.from_user.mention),
             reply_markup=START_BUTTONS,
@@ -138,15 +129,6 @@ async def cb_handler(bot, update):
         await display_settings(bot, update, db, cb=True, cb_text=True)
     elif update.data == "close":
         await update.message.delete()
-    elif update.data == "set_af":
-        as_file = await db.is_as_file(update.from_user.id)
-        await db.update_as_file(update.from_user.id, not as_file)
-        if as_file:
-            alert_text = "Upload mode changed to file successfully"
-        else:
-            alert_text = "Upload mode changed to photo successfully"
-        await update.answer(text=alert_text, show_alert=True)
-        await display_settings(bot, update, db, cb=True)
     elif update.data == "check_fsub":
         if await is_subscribed(bot, update.from_user.id):
             await update.message.edit_text(
@@ -179,8 +161,6 @@ async def check_fsub(bot, update):
             quote=True
         )
     elif update.text.startswith("/help"):
-        if not await db.is_user_exist(update.from_user.id):
-            await db.add_user(update.from_user.id)
         await update.reply_text(
             text=HELP_TEXT,
             disable_web_page_preview=True,
@@ -188,8 +168,6 @@ async def check_fsub(bot, update):
             quote=True
         )
     elif update.text.startswith("/about"):
-        if not await db.is_user_exist(update.from_user.id):
-            await db.add_user(update.from_user.id)
         await update.reply_text(
             text=ABOUT_TEXT,
             disable_web_page_preview=True,
@@ -201,8 +179,6 @@ async def check_fsub(bot, update):
         await db.add_user(update.from_user.id)
         await update.reply_text("Settings reset successfully")
     elif update.text.startswith("/settings"):
-        if not await db.is_user_exist(update.from_user.id):
-            await db.add_user(update.from_user.id)
         await display_settings(bot, update, db)
     elif update.text.startswith("/status"):
         total_users = await db.total_users_count()
