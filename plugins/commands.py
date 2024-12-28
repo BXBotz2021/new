@@ -18,37 +18,29 @@ AUTH_CHANNEL = (
 )
 
 START_TEXT = """**Hello {} 😌
-I am a QR Code Bot**
+I am a Bot**
 
->> `I can generate text to QR Code with QR Code decode to text support.`"""
+.`"""
 
 HELP_TEXT = """**Hey, Follow these steps:**
 
-➞ Send me a link/text I will generate the QR code of that text.
-➞ Send me a QR code image I will decode that image and convert it to text.
 
 **Available Commands:**
 
 /start - Checking Bot Online
 /help - For more help
 /about - For more about me
-/settings - For bot settings
-/reset - For reset settings
 /status - For bot status"""
 
 ABOUT_TEXT = """--**About Me 😎**--
 
-🤖 **Name :** [QR Code Bot](https://telegram.me/{})
+🤖 **Name :** [telegram bot](https://telegram.me/{})
 
-👨‍💻 **Developer :** [GitHub](https://github.com/FayasNoushad) | [Telegram](https://telegram.me/FayasNoushad)
-
-🌐 **Source :** [👉 Click here](https://github.com/FayasNoushad/QR-Code-bot)
+👨‍💻 **Developer :** [GitHub](https://github.com/mufaztg) | [Telegram](https://telegram.me/moviez_botz)
 
 🖋 **Language :** [Python3](https://python.org)
 
 🤰 **Framework :** [Pyrogram](https://pyrogram.org)"""
-
-SETTINGS_TEXT = "**Settings**"
 
 START_BUTTONS = InlineKeyboardMarkup(
     [
@@ -67,7 +59,6 @@ HELP_BUTTONS = InlineKeyboardMarkup(
             InlineKeyboardButton('About 🔰', callback_data='about')
         ],
         [
-            InlineKeyboardButton('⚒ Settings', callback_data='settings'),
             InlineKeyboardButton('Close ✖️', callback_data='close')
         ]
     ]
@@ -84,14 +75,11 @@ ABOUT_BUTTONS = InlineKeyboardMarkup(
 )
 
 FSub_BUTTONS = InlineKeyboardMarkup(
-    [
-        [
-            InlineKeyboardButton("Join Channel", url=f"https://t.me/{CHANNEL_USERNAME}")
-        ],
-        [
-            InlineKeyboardButton("Check Again ✅", callback_data="check_fsub")
-        ]
-    ]
+    [[
+    InlineKeyboardButton("Join Channel", url=f"https://t.me/{CHANNEL_USERNAME}")
+    ],[
+    InlineKeyboardButton("Check Again ✅", callback_data="check_fsub")
+    ]]
 )
 
 async def is_subscribed(bot, user_id):
@@ -174,12 +162,6 @@ async def check_fsub(bot, update):
             reply_markup=ABOUT_BUTTONS,
             quote=True
         )
-    elif update.text.startswith("/reset"):
-        await db.delete_user(update.from_user.id)
-        await db.add_user(update.from_user.id)
-        await update.reply_text("Settings reset successfully")
-    elif update.text.startswith("/settings"):
-        await display_settings(bot, update, db)
     elif update.text.startswith("/status"):
         total_users = await db.total_users_count()
         text = "**Bot Status**\n"
@@ -190,42 +172,5 @@ async def check_fsub(bot, update):
             disable_web_page_preview=True
         )
 
-async def display_settings(bot, update, db, cb=False, cb_text=False):
-    chat_id = update.from_user.id
-    as_file = await db.is_as_file(chat_id)
-    as_file_btn = [
-        InlineKeyboardButton("Upload Mode", callback_data="lol")
-    ]
-    if as_file:
-        as_file_btn.append(
-            InlineKeyboardButton('Upload as File', callback_data='set_af')
-        )
-    else:
-        as_file_btn.append(
-            InlineKeyboardButton('Upload as Photo', callback_data='set_af')
-        )
-    close_btn = [
-        InlineKeyboardButton('Close ✖️', callback_data='close')
-    ]
-    settings_buttons = [as_file_btn, close_btn]
-    try:
-        if cb:
-            if cb and cb_text:
-                await update.message.edit_text(
-                    text=SETTINGS_TEXT,
-                    disable_web_page_preview=True,
-                    reply_markup=InlineKeyboardMarkup(settings_buttons)
-                )
-            else:
-                await update.edit_message_reply_markup(
-                    InlineKeyboardMarkup(settings_buttons)
-                )
-        else:
-            await update.reply_text(
-                text=SETTINGS_TEXT,
-                quote=True,
-                disable_web_page_preview=True,
-                reply_markup=InlineKeyboardMarkup(settings_buttons)
-            )
     except Exception as error:
-        print(error)
+    logger.exception("An error occurred in the function: %s", error)
