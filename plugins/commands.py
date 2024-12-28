@@ -3,6 +3,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
 from database import db
 import re
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 
 id_pattern = re.compile(r"^.\d+$")
 
