@@ -142,7 +142,7 @@ async def handle_commands(bot, update):
         )
 
 
-@Client.on_message(filters.private & filters.text & ~filters.command)
+@Client.on_message(filters.private & filters.text & ~filters.command(["start", "help", "about", "status"]))
 async def handle_youtube_link(bot, message):
     if not await is_subscribed(bot, message.from_user.id):
         await message.reply_text(
