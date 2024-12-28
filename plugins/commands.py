@@ -4,6 +4,10 @@ from pyrogram.errors import UserNotParticipant
 from database import db
 
 CHANNEL_USERNAME = "MOVIEZ_BOTZ"
+auth_channel = '-1002437864651'
+AUTH_CHANNEL = (
+    int(auth_channel) if auth_channel and id_pattern.search(auth_channel) else None
+)
 
 START_TEXT = """**Hello {} 😌
 I am a QR Code Bot**
