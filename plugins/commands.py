@@ -81,15 +81,23 @@ FSub_BUTTONS = InlineKeyboardMarkup(
     ]
 )
 
-async def is_subscribed(bot, user_id):
+async def is_subscribed(bot, query):
     try:
-        user = await bot.get_chat_member(CHANNEL_USERNAME, user_id)
-        return user.status in ["member", "administrator", "creator"]
+        user = await bot.get_chat_member(AUTH_CHANNEL, query.from_user.id)
     except UserNotParticipant:
-        return False
+        await __(bot, AUTH_CHANNEL)
+        return query.from_user.id in temp.REQUESTERS.get(AUTH_CHANNEL, {}).get(
+            "list", []
+        )
+
     except Exception as e:
-        print(f"Error checking subscription: {e}")
-        return False
+        logger.exception(e)
+    else:
+        if user.status != enums.ChatMemberStatus.BANNED:
+            return True
+
+    return False
+
 
 @Client.on_callback_query()
 async def cb_handler(bot, update):
