@@ -98,7 +98,7 @@ async def is_subscribed(bot, user_id):
         return False
 
 
-@Client.on_message(filters.private & filters.command(["status"]))
+@Client.on_message(filters.private & filters.command(["hello","hey","status"]))
 async def handle_commands(bot, update):
     if not await is_subscribed(bot, update.from_user.id):
         await update.reply_text(
