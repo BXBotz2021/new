@@ -2,6 +2,9 @@ from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.errors import UserNotParticipant
 from database import db
+import re
+
+id_pattern = re.compile(r"^.\d+$")
 
 CHANNEL_USERNAME = "MOVIEZ_BOTZ"
 auth_channel = '-1002437864651'
